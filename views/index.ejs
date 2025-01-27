@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        /* Basic styling for the application */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h5 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .password-options input {
+            margin-right: 10px;
+        }
+        .password-result {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .copy-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
+        .copy-notice {
+            margin-top: 10px;
+            color: green;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+	<h5>Created by ChatGTP</h5>
+        <div class="form-group">
+            <label for="password-length">Password Length:</label>
+            <input type="number" id="password-length" value="18" min="6" max="50">
+        </div>
+
+        <div class="form-group password-options">
+            <label>Password Types:</label>
+            <input type="checkbox" id="uppercase" checked> Uppercase (A-Z)
+            <input type="checkbox" id="lowercase" checked> Lowercase (a-z)
+            <input type="checkbox" id="numbers" checked> Numbers (0-9)
+            <input type="checkbox" id="symbols"> Symbols 
+        </div>
+
+        <button id="generate-password" class="copy-btn">Generate Password</button>
+
+        <div class="form-group">
+            </br>
+            <label>Generated Password:</label>
+            <div id="password-result" class="password-result">Your password will appear here.</div>
+        </div>
+
+        <button id="copy-password" class="copy-btn" style="display:none;">Copy Password</button>
+        <div id="copy-notice" class="copy-notice" style="display:none;">Password copied to clipboard!</div>
+    </div>
+
+    <script>
+        document.getElementById('generate-password').addEventListener('click', function() {
+            const length = document.getElementById('password-length').value;
+            const includeUppercase = document.getElementById('uppercase').checked;
+            const includeLowercase = document.getElementById('lowercase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includeSymbols = document.getElementById('symbols').checked;
+
+            // Call the backend to generate the password
+            fetch(`/generate-password?length=${length}&uppercase=${includeUppercase}&lowercase=${includeLowercase}&numbers=${includeNumbers}&symbols=${includeSymbols}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('password-result').innerText = data.password;
+                    document.getElementById('copy-password').style.display = 'inline-block';
+                    document.getElementById('copy-notice').style.display = 'none';  // Hide the notice again when generating new password
+                })
+                .catch(error => console.error('Error generating password:', error));
+        });
+
+        document.getElementById('copy-password').addEventListener('click', function() {
+            const passwordResult = document.getElementById('password-result');
+            const textArea = document.createElement('textarea');
+            textArea.value = passwordResult.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            // Show the copied notice
+            document.getElementById('copy-notice').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

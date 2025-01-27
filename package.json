@@ -1,0 +1,16 @@
+{
+  "name": "password-generator",
+  "version": "1.0.0",
+  "description": "A responsive password generator web application",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "ejs": "^3.1.9",
+    "express-session": "^1.17.2",
+    "body-parser": "^1.20.2",
+    "crypto": "^1.0.1"
+  }
+}

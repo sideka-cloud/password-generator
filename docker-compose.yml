@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: pass-gen
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: npm start
