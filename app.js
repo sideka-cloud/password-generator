@@ -16,49 +16,61 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Handle the root route
-app.get('/', (req, res) => {
-    res.render('index'); // This will render views/index.ejs
-});
-
-// Password generation route
-app.get('/generate-password', (req, res) => {
-    const length = parseInt(req.query.length) || 18;
-    const includeUppercase = req.query.uppercase === 'true';
-    const includeLowercase = req.query.lowercase === 'true';
-    const includeNumbers = req.query.numbers === 'true';
-    const includeSymbols = req.query.symbols === 'true';
-
-    // Generate password
-    const password = generatePassword(length, includeUppercase, includeLowercase, includeNumbers, includeSymbols);
-
-    // Return password as JSON
-    res.json({ password });
-});
-
-// Password generation function
+// Function to generate a password
 function generatePassword(length, includeUppercase, includeLowercase, includeNumbers, includeSymbols) {
-    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
     const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
     const numberChars = '0123456789';
-    const symbolChars = '!@#$%^&*()_+[]{}|;:,.<>?';
-    
-    let charset = '';
-    if (includeUppercase) charset += uppercaseChars;
-    if (includeLowercase) charset += lowercaseChars;
-    if (includeNumbers) charset += numberChars;
-    if (includeSymbols) charset += symbolChars;
+    const symbolChars = '~!@#$%^&*()_+-=[]{}|;:,.<>?\"/';
 
-    if (charset.length === 0) return ''; // No options selected
+    let characterPool = '';
+    if (includeUppercase) characterPool += uppercaseChars;
+    if (includeLowercase) characterPool += lowercaseChars;
+    if (includeNumbers) characterPool += numberChars;
+    if (includeSymbols) characterPool += symbolChars;
+
+    if (!characterPool) return ''; // If no character set is selected, return empty string
 
     let password = '';
-    for (let i = 0; i < length; i++) {
-        password += charset.charAt(Math.floor(Math.random() * charset.length));
+    let usedChars = new Set();
+
+    // Ensure the password is generated with no repeated characters
+    while (password.length < length) {
+        const randomIndex = Math.floor(Math.random() * characterPool.length);
+        const randomChar = characterPool[randomIndex];
+
+        // Add character if it hasn't been used already
+        if (!usedChars.has(randomChar)) {
+            password += randomChar;
+            usedChars.add(randomChar);
+        }
     }
 
     return password;
 }
 
+// Handle the root route
+app.get('/', (req, res) => {
+    res.render('index'); // This will render views/index.ejs
+});
+
+// Handle password generation
+app.get('/generate-password', (req, res) => {
+    const { length, uppercase, lowercase, numbers, symbols } = req.query;
+
+    // Call the function to generate a password without duplicate characters
+    const password = generatePassword(
+        parseInt(length),
+        uppercase === 'true',
+        lowercase === 'true',
+        numbers === 'true',
+        symbols === 'true'
+    );
+
+    res.json({ password });
+});
+
+// Listen on the specified port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
