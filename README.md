@@ -12,3 +12,8 @@ docker-compose up --build -d
 ```
 
 Access with url `http://IP:3000`
+
+Remove container
+```
+docker compose down -v
+```
