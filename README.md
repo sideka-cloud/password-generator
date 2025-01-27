@@ -2,8 +2,8 @@
 
 Clone repository
 ```
-git clone https://github.com/sideka-cloud/notepad.git
-cd notepad
+git clone https://github.com/sideka-cloud/password-generator.git
+cd password-generator
 ```
 
 Run with docker
