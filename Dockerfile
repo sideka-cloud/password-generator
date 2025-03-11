@@ -1,4 +1,4 @@
-# Use official Node.js image based on Debian
+# Use official Node.js image based on Alpine
 FROM node:22-alpine
 
 # Maintainer
